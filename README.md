@@ -6,10 +6,14 @@ It will not crawl any sites outside the given domain, this includes subdomains.
 
 ## Usage
 This simply tool can be used by running the following command
-> WSC example.com
+```
+WSC example.com
+```
 
 Other paramaters can be defined for alternativ run modes.
-> WCS [param] <domain>
+```
+WCS [param] <domain>
+```
 
 ###Params
 To be added
