@@ -1,15 +1,17 @@
 package cmd
 
 import (
-	"fmt"
+	"log/slog"
 	"os"
 
+	"github.com/AdrianThePirate/WSC---Website-Checker/internal/crawler"
 	"github.com/AdrianThePirate/WSC---Website-Checker/internal/util"
 	"github.com/spf13/cobra"
 )
 
 var (
-	httpMode bool
+	httpMode    bool
+	verboseMode bool
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -24,16 +26,25 @@ This application is a crawler that checks a given website for:
 	* Multi-redirects`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if verboseMode {
+			slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})))
+		}
+
+		slog.Info("SWC - starting", "url", args[0])
 		domain, err := util.ValidateDomain(args[0], httpMode)
 		if err != nil {
+			slog.Error("validation error", "err", err)
 			return err
 		}
 
 		err = util.ValidateConnection(domain)
 		if err != nil {
+			slog.Error("could not establish connection", "err", err)
 			return err
 		}
-		fmt.Println(domain)
+
+		err = crawler.Start(domain)
+
 		return nil
 	},
 }
@@ -49,4 +60,5 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolVarP(&httpMode, "http", "s", false, "assume http instead of https")
+	rootCmd.Flags().BoolVarP(&verboseMode, "verbose", "v", false, "set logging to verbose")
 }

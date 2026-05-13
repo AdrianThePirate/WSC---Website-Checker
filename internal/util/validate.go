@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
@@ -14,6 +15,7 @@ func ValidateDomain(path string, httpMode bool) (string, error) {
 		} else {
 			path = "https://" + path
 		}
+		slog.Info("http/s schema not defined, making assumption", "url", path)
 	}
 
 	u, err := url.ParseRequestURI(path)
